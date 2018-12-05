@@ -1,0 +1,6 @@
+.row
+  .column-30
+    dl
+      dt= @list.title
+      - @list.list_items.each do |i|
+        dd= i.description
