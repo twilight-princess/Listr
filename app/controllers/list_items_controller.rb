@@ -1,10 +1,11 @@
 class ListItemsController < ApplicationController
   before_action :set_list_item, only: [:show, :edit, :update, :destroy]
+  before_action :set_list
 
   # GET /list_items
   # GET /list_items.json
   def index
-    @list_items = ListItem.all
+    @list_items = @list.list_items
   end
 
   # GET /list_items/1
@@ -14,7 +15,7 @@ class ListItemsController < ApplicationController
 
   # GET /list_items/new
   def new
-    @list_item = ListItem.new
+    @list_item = ListItem.new(list_id: params[:list_id])
   end
 
   # GET /list_items/1/edit
@@ -28,8 +29,8 @@ class ListItemsController < ApplicationController
 
     respond_to do |format|
       if @list_item.save
-        format.html { redirect_to @list_item, notice: 'List item was successfully created.' }
-        format.json { render :show, status: :created, location: @list_item }
+        format.html { redirect_to @list, notice: 'List item was successfully created.' }
+        format.json { render :show, status: :created, location: @list }
       else
         format.html { render :new }
         format.json { render json: @list_item.errors, status: :unprocessable_entity }
@@ -67,8 +68,13 @@ class ListItemsController < ApplicationController
       @list_item = ListItem.find(params[:id])
     end
 
+    def set_list
+      @list = List.find(params[:list_id])
+    end
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def list_item_params
-      params.fetch(:list_item, {})
+      params.require(:list_item)
+            .permit(:list_id, :description)
     end
 end
